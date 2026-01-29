@@ -53,22 +53,25 @@ var source = {
             const hasNextPage = page < totalPages;
 
             const results = data.map(item => {
-                // The _embed parameter should bring in featured media, but search endpoint structure 
-                // is slightly different. We might need a secondary lookup or use what's available.
-                // For search results, we often just get ID and Title.
-                // Ideally we'd map this, but let's try to get minimal info first.
+                // Try to find the best cover image
+                let coverUrl = item.featured_image_url || null;
                 
-                let coverUrl = null;
-                if (item._embedded && item._embedded['wp:featuredmedia']) {
+                if (!coverUrl && item._embedded && item._embedded['wp:featuredmedia']) {
                     const media = item._embedded['wp:featuredmedia'][0];
                     coverUrl = media.source_url;
                 }
 
+                // Title can be a string (search endpoint) or object (standard endpoint)
+                let title = item.title;
+                if (typeof title === 'object' && title !== null && title.rendered) {
+                    title = title.rendered;
+                }
+
                 return {
                     id: item.id.toString(),
-                    title: this._decodeHtml(item.title),
-                    url: item.url,
-                    coverUrl: coverUrl // Might be null if not embedded
+                    title: this._decodeHtml(String(title || "")),
+                    url: item.url || item.link, // Search uses 'url', posts use 'link'
+                    coverUrl: coverUrl
                 };
             });
 
@@ -77,7 +80,7 @@ var source = {
                 hasNextPage
             };
         } catch (error) {
-            console.error("NASA+ search error:", error);
+            console.error("NASA+ search error:", error.message || error);
             // Return empty results on error to prevent app crash
             return { results: [], hasNextPage: false };
         }
