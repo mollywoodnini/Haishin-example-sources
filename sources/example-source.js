@@ -179,47 +179,25 @@ var source = {
         };
     },
 
-    // ============================================
-    // OPTIONAL METHODS
-    // ============================================
-
     /**
-     * Get popular/trending videos.
+     * Get entry videos (first glance of available content).
      * 
-     * @param {number} page - Page number (1-indexed)
-     * @returns {Object} Same format as search()
+     * @returns {Promise<Array>} Array of video objects: [{ id, title, coverUrl, url }]
      */
-    getPopular(page) {
-        return {
-            results: [
-                {
-                    id: "popular-1",
-                    title: "Popular Video 1",
-                    coverUrl: "https://via.placeholder.com/300x400",
-                    url: "https://example.com/video/popular-1"
-                }
-            ],
-            hasNextPage: false
-        };
-    },
-
-    /**
-     * Get latest/recently updated videos.
-     * 
-     * @param {number} page - Page number (1-indexed)
-     * @returns {Object} Same format as search()
-     */
-    getLatest(page) {
-        return {
-            results: [
-                {
-                    id: "latest-1",
-                    title: "Latest Video 1",
-                    coverUrl: "https://via.placeholder.com/300x400",
-                    url: "https://example.com/video/latest-1"
-                }
-            ],
-            hasNextPage: false
-        };
+    getEntryVideos() {
+        return [
+            {
+                id: "popular-1",
+                title: "Popular Video 1",
+                coverUrl: "https://via.placeholder.com/300x400",
+                url: "https://example.com/video/popular-1"
+            },
+            {
+                id: "latest-1",
+                title: "Latest Video 1",
+                coverUrl: "https://via.placeholder.com/300x400",
+                url: "https://example.com/video/latest-1"
+            }
+        ];
     }
 };

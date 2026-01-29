@@ -4,7 +4,7 @@
  * Provides access to official NASA video content including live streams,
  * documentaries, and mission updates via the NASA+ public API.
  * 
- * @version 1.0.0
+ * @version 1.0.1
  * @author Haishin
  * @license MIT
  */
@@ -16,7 +16,7 @@ var source = {
     
     id: "nasa-plus",
     name: "NASA+",
-    version: "1.0.0",
+    version: "1.0.1",
     description: "Official streaming service from the National Aeronautics and Space Administration",
     author: "Haishin",
     baseUrl: "https://plus.nasa.gov",
@@ -235,11 +235,11 @@ var source = {
      * Get streaming URLs.
      * Since we extracted the direct HLS URL in details, we just return it here.
      */
-    async getVideoSources(episodeId, episodeUrl) {
-        console.log(`[NASA+ getVideoSources] Starting for episodeId=${episodeId}, episodeUrl=${episodeUrl}`);
+    async getEpisodeStreams(episodeId, episodeUrl) {
+        console.log(`[NASA+ getEpisodeStreams] Starting for episodeId=${episodeId}, episodeUrl=${episodeUrl}`);
         
         if (!episodeUrl) {
-            console.error(`[NASA+ getVideoSources] No stream URL provided`);
+            console.error(`[NASA+ getEpisodeStreams] No stream URL provided`);
             throw new Error("No stream URL found");
         }
 
@@ -254,90 +254,67 @@ var source = {
             subtitles: [] // NASA usually burns in subs or provides CC in the HLS stream
         };
         
-        console.log(`[NASA+ getVideoSources] Returning stream: ${episodeUrl}`);
+        console.log(`[NASA+ getEpisodeStreams] Returning stream: ${episodeUrl}`);
         return result;
     },
 
-    // ============================================
-    // OPTIONAL METHODS
-    // ============================================
-
     /**
-     * Get latest/recently updated videos.
+     * Get entry videos (first glance of available content).
      * Uses the main video endpoint sorted by date.
      */
-    async getLatest(page) {
+    async getEntryVideos() {
         const limit = 20;
-        console.log(`[NASA+ getLatest] Starting for page=${page}`);
+        const page = 1;
+        console.log(`[NASA+ getEntryVideos] Starting`);
         
         try {
-            const url = `${this.apiUrl}/video?per_page=${limit}&page=${page}`;
-            console.log(`[NASA+ getLatest] Fetching URL: ${url}`);
+            // Add _embed to get featured media in response
+            const url = `${this.apiUrl}/video?per_page=${limit}&page=${page}&_embed`;
+            console.log(`[NASA+ getEntryVideos] Fetching URL: ${url}`);
             
             const response = await fetch(url);
-            console.log(`[NASA+ getLatest] Response status: ${response.status}, ok: ${response.ok}`);
+            console.log(`[NASA+ getEntryVideos] Response status: ${response.status}, ok: ${response.ok}`);
             
             if (!response.ok) {
-                throw new Error(`Get latest failed: ${response.status}`);
+                throw new Error(`Get entry videos failed: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log(`[NASA+ getLatest] Received ${Array.isArray(data) ? data.length : 'non-array'} items`);
-            
-            // Note: headers may not be available in all JS runtime environments
-            let totalPages = 1;
-            try {
-                if (response.headers && typeof response.headers.get === 'function') {
-                    totalPages = parseInt(response.headers.get("X-WP-TotalPages") || "1");
-                }
-            } catch (headerError) {
-                console.log(`[NASA+ getLatest] Could not read headers: ${headerError.message || headerError}`);
-            }
-            // Fallback: assume more pages if we got a full page of results
-            const hasNextPage = data.length >= limit ? true : (page < totalPages);
-            console.log(`[NASA+ getLatest] Total pages: ${totalPages}, hasNextPage: ${hasNextPage}`);
+            console.log(`[NASA+ getEntryVideos] Received ${Array.isArray(data) ? data.length : 'non-array'} items`);
 
             const results = [];
             for (let i = 0; i < data.length; i++) {
                 const item = data[i];
                 try {
+                    // Try to find the best cover image
+                    let coverUrl = item.featured_image_url || null;
+                    
+                    if (!coverUrl && item._embedded && item._embedded['wp:featuredmedia']) {
+                        const media = item._embedded['wp:featuredmedia'][0];
+                        coverUrl = media ? media.source_url : null;
+                    }
+                    
                     const result = {
                         id: item.id.toString(),
                         title: this._decodeHtml(item.title.rendered),
-                        coverUrl: item.featured_image_url || null,
+                        coverUrl: coverUrl,
                         url: item.link
                     };
-                    console.log(`[NASA+ getLatest] Item ${i}: id=${result.id}, title="${result.title}"`);
+                    console.log(`[NASA+ getEntryVideos] Item ${i}: id=${result.id}, title="${result.title}", coverUrl=${coverUrl}`);
                     results.push(result);
                 } catch (itemError) {
-                    console.error(`[NASA+ getLatest] Error processing item ${i}:`, itemError.message || itemError);
+                    console.error(`[NASA+ getEntryVideos] Error processing item ${i}:`, itemError.message || itemError);
                 }
             }
 
-            console.log(`[NASA+ getLatest] Returning ${results.length} results, hasNextPage: ${hasNextPage}`);
-            return {
-                results,
-                hasNextPage
-            };
+            console.log(`[NASA+ getEntryVideos] Returning ${results.length} results`);
+            return results;
 
         } catch (error) {
-            console.error(`[NASA+ getLatest] Error: ${error.message || error}`);
-            console.error(`[NASA+ getLatest] Error stack: ${error.stack || 'no stack'}`);
-            return { results: [], hasNextPage: false };
+            console.error(`[NASA+ getEntryVideos] Error: ${error.message || error}`);
+            console.error(`[NASA+ getEntryVideos] Error stack: ${error.stack || 'no stack'}`);
+            return [];
         }
-    },
-
-    /**
-     * Get popular/trending videos.
-     * NASA WP API doesn't have a specific "popular" endpoint, 
-     * so we'll fetch a different subset or just latest for now.
-     * Alternatively, we could look for a 'popular' category if it exists.
-     * For now, we will return the latest videos as a fallback.
-     */
-    async getPopular(page) {
-        console.log(`[NASA+ getPopular] Delegating to getLatest for page=${page}`);
-        // Fallback to latest since 'popular' sort isn't standard in WP API without plugins
-        return this.getLatest(page);
     },
 
     // ============================================

@@ -57,13 +57,13 @@ Use `sources/example-source.js` as a template. Each source must implement:
 | `search(query, page)` | Search for videos |
 | `getVideoDetails(url)` | Get video info and episodes |
 | `getVideoSources(episodeId, url)` | Get streaming URLs |
+| `getEntryVideos()` | Get featured/popular content (Home page) |
 
 ### Optional Methods
 
 | Method | Description |
 |--------|-------------|
-| `getPopular(page)` | Get popular/trending videos |
-| `getLatest(page)` | Get recently updated videos |
+| *None currently defined* | |
 
 ## Updating the Manifest
 
