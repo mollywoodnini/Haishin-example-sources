@@ -235,11 +235,11 @@ var source = {
      * Get streaming URLs.
      * Since we extracted the direct HLS URL in details, we just return it here.
      */
-    async getEpisodeStreams(episodeId, episodeUrl) {
-        console.log(`[NASA+ getEpisodeStreams] Starting for episodeId=${episodeId}, episodeUrl=${episodeUrl}`);
+    async getVideoSources(episodeId, episodeUrl) {
+        console.log(`[NASA+ getVideoSources] Starting for episodeId=${episodeId}, episodeUrl=${episodeUrl}`);
         
         if (!episodeUrl) {
-            console.error(`[NASA+ getEpisodeStreams] No stream URL provided`);
+            console.error(`[NASA+ getVideoSources] No stream URL provided`);
             throw new Error("No stream URL found");
         }
 
@@ -254,7 +254,7 @@ var source = {
             subtitles: [] // NASA usually burns in subs or provides CC in the HLS stream
         };
         
-        console.log(`[NASA+ getEpisodeStreams] Returning stream: ${episodeUrl}`);
+        console.log(`[NASA+ getVideoSources] Returning stream: ${episodeUrl}`);
         return result;
     },
 

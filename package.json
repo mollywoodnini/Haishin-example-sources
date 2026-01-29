@@ -1,0 +1,20 @@
+{
+  "name": "haishin-example-sources",
+  "version": "1.0.0",
+  "description": "This is an example repository structure that demonstrates how to host multiple sources for the Haishin app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@mollywoodnini-GitHub:mollywoodnini/Haishin-example-sources.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
