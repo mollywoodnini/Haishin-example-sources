@@ -4,7 +4,7 @@
     {
       "id": "archiveorg-cartoons",
       "name": "Archive.org Cartoons",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "language": "en",
       "baseURL": "https://archive.org",
       "iconURL": "https://archive.org/images/glogo.jpg",
@@ -14,7 +14,7 @@
     {
       "id": "nasa-plus",
       "name": "NASA+",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "language": "en",
       "baseURL": "https://plus.nasa.gov",
       "iconURL": "https://plus.nasa.gov/wp-content/uploads/2023/03/cropped-nasa-png-placeholder.png",
