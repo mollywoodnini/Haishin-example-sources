@@ -15,8 +15,8 @@ describe('Archive.org Cartoons Source E2E Tests', () => {
         expect(source.collection).toBe('classic_cartoons');
     });
 
-    test('getFeatured should return popular series', async () => {
-        const result = await source.getFeatured();
+    test('getEntryVideos should return popular series', async () => {
+        const result = await source.getEntryVideos();
         
         expect(result).toBeInstanceOf(Array);
         expect(result.length).toBeGreaterThan(0);

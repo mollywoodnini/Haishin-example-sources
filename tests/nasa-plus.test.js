@@ -14,17 +14,16 @@ describe('NASA+ Source E2E Tests', () => {
         expect(source.nsfw).toBe(false);
     });
 
-    test('getLatest should return video results', async () => {
+    test('getEntryVideos should return video results', async () => {
         // Increase timeout for network request
-        const result = await source.getLatest(1);
+        const result = await source.getEntryVideos();
         
         expect(result).toBeDefined();
-        expect(result.results).toBeInstanceOf(Array);
-        expect(result.results.length).toBeGreaterThan(0);
-        expect(result.hasNextPage).toBeDefined();
+        expect(result).toBeInstanceOf(Array);
+        expect(result.length).toBeGreaterThan(0);
 
         // Check first item structure
-        const firstItem = result.results[0];
+        const firstItem = result[0];
         expect(firstItem.id).toBeDefined();
         expect(firstItem.title).toBeDefined();
         expect(firstItem.url).toBeDefined();
@@ -49,9 +48,9 @@ describe('NASA+ Source E2E Tests', () => {
     }, 10000);
 
     test('getVideoDetails should return full details and stream info', async () => {
-        // First get a video ID from latest to ensure it's valid
-        const latest = await source.getLatest(1);
-        const video = latest.results[0];
+        // First get a video ID from entry videos to ensure it's valid
+        const latest = await source.getEntryVideos();
+        const video = latest[0];
         
         const details = await source.getVideoDetails(video.id, video.url);
         
@@ -72,15 +71,15 @@ describe('NASA+ Source E2E Tests', () => {
 
     test('getVideoSources should return playable stream', async () => {
         // 1. Get a video
-        const latest = await source.getLatest(1);
-        const video = latest.results[0];
+        const latest = await source.getEntryVideos();
+        const video = latest[0];
         
         // 2. Get details (which fetches the HLS url)
         const details = await source.getVideoDetails(video.id, video.url);
         const episode = details.episodes['nasa-main'][0];
         
         // 3. Get stream sources
-        const sources = await source.getVideoSources(episode.id, episode.url);
+        const sources = await source.getEpisodeStreams(episode.id, episode.url);
         
         expect(sources).toBeDefined();
         expect(sources.streams).toBeInstanceOf(Array);
