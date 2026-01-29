@@ -1,0 +1,15 @@
+{
+  "name": "Example Sources Repository",
+  "sources": [
+    {
+      "id": "archiveorg-cartoons",
+      "name": "Archive.org Cartoons",
+      "version": "1.0.0",
+      "language": "en",
+      "baseURL": "https://archive.org",
+      "iconURL": "https://archive.org/images/glogo.jpg",
+      "isNSFW": false,
+      "description": "Classic cartoons and animations from the Internet Archive"
+    }
+  ]
+}
