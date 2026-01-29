@@ -1,37 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-
-// Helper to load a source file by evaluating it in a sandbox
-function loadSource(filePath) {
-    const code = fs.readFileSync(filePath, 'utf8');
-    // Minimal mock environment for the source
-    const sandbox = {
-        source: null,
-        console: console,
-        fetch: global.fetch,
-        // Mock specific browser/Haishin globals if needed
-    };
-    
-    // We append "; source;" to ensure the evaluated code returns the source object
-    // Most sources end with "source;" but this is safer
-    try {
-        // Use a function constructor to create a scope, but we need to assign to the sandbox
-        // Since `eval` is tricky with scope, we'll just use a simple Function wrap
-        // However, the source files define `var source = ...` which is function-scoped.
-        // So we can return it.
-        const factory = new Function('console', 'fetch', code + '\nreturn source;');
-        return factory(console, global.fetch);
-    } catch (e) {
-        throw new Error(`Failed to load source ${filePath}: ${e.message}`);
-    }
-}
+const { loadSource } = require('./test-utils');
 
 describe('NASA+ Source E2E Tests', () => {
     let source;
 
     beforeAll(() => {
-        const sourcePath = path.join(__dirname, '../sources/nasa-plus.js');
-        source = loadSource(sourcePath);
+        source = loadSource('sources/nasa-plus.js');
     });
 
     test('Metadata should be correct', () => {
