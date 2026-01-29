@@ -8,7 +8,7 @@
  * from the 1930s-1950s that are now in the public domain.
  * 
  * @author Haishin
- * @version 1.0.1
+ * @version 1.0.2
  * @license MIT
  */
 
@@ -18,7 +18,7 @@ var source = {
     // ============================================
     id: "archiveorg-cartoons",
     name: "Classic Cartoons",
-    version: "1.0.1",
+    version: "1.0.2",
     description: "Public domain classic cartoons from Archive.org. Features Betty Boop, Popeye, Felix the Cat, and more!",
     author: "Haishin",
     baseUrl: "https://archive.org",
@@ -434,7 +434,7 @@ var source = {
     /**
      * Get featured/popular cartoons
      */
-    async getFeatured() {
+    async getEntryVideos() {
         try {
             console.log('Fetching featured cartoons');
             
