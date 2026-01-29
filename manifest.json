@@ -4,7 +4,7 @@
     {
       "id": "archiveorg-cartoons",
       "name": "Archive.org Cartoons",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "language": "en",
       "baseURL": "https://archive.org",
       "iconURL": "https://archive.org/images/glogo.jpg",
